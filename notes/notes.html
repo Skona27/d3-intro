@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Event Listeners in D3</title>
+  <link rel="stylesheet" href="notes.css">
+</head>
+<body>
+
+  <h1>My notes.</h1>
+  <div id="notes">
+    <p class="note">
+      Need to go to the store.
+    </p>
+    <p class="note">
+      What's the name of that movie with that guy?
+    </p>
+    <p class="note">
+      Here's another note.
+    </p>
+  </div>
+  <form id="new-note">
+    <input type="text">
+    <button type="submit">Add Note</button>
+    <button id="btn-delete">Delete all notes</button>
+    <button id="btn-random">Random font size</button> 
+  </form>
+
+
+  <script src="https://d3js.org/d3.v4.js"></script>
+
+  <script>
+    // adding new notes
+      d3.select("#new-note").on("submit", function() {
+        d3.event.preventDefault(); 
+        
+        let input = d3.select("input");
+        d3.select("#notes")
+          .append("p").classed("note", true).text(input.property("value"));
+  
+        input.property("value", "");
+      });
+
+      // removing all notes
+      d3.select("#btn-delete").on("click", () => {
+        d3.event.preventDefault(); 
+
+        d3.selectAll(".note").remove(".note");
+      });
+
+    // random font size
+    d3.select("#btn-random").on("click", () => {
+      d3.event.preventDefault();
+
+      let notes = d3.selectAll(".note");
+
+      notes.style("font-size", () => {
+          let size = Math.floor((Math.random()*20)) + 10;
+          return `${size}px`; 
+        })
+    });
+  </script>
+
+</body>
+</html>
