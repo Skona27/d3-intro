@@ -1,3 +1,13 @@
+// define properties
+let width = 800;
+let height = 400;
+let barPadding = 10;
+
+// select svg element, set it's attr
+let svg = d3.selectAll("svg")
+  .attr("width", width)
+  .style("height", height);
+
 function getFrequencies(string) {
   // remove spaces
   string = string.split(" ").join("");
@@ -21,15 +31,21 @@ function getFrequencies(string) {
 d3.select("form").on("submit", () => {
   // prevent form from submitting
   d3.event.preventDefault();
+
   // select input text
   let input = d3.select("input");
   let text = input.property("value").toLowerCase();
 
+  // analyze text
+  let data = getFrequencies(text);
+  // calculate bar width
+  let barWidth = width / data.length - barPadding;
+
   // UPDATE SELECTION
-  // select all letter div (at first, none exists)
-  let letters = d3.select("#letters").selectAll(".letter")
-    // bind char count to letter divs
-    .data(getFrequencies(text), data => data.character);
+  // select all letter rect (at first, none exists)
+  let letters = svg.selectAll(".letter")
+    // bind char count to letter rects
+    .data(data, data => data.character);
 
     // REMOVE SELECTION
   letters
@@ -39,16 +55,21 @@ d3.select("form").on("submit", () => {
 
   // ENTER SELECTION
   letters
-    // move divs to enter property
+    // move rects to enter property
     .enter()
-    // append divs
-    .append("div")
-      // adjust height based on count
+    // append rect
+    .append("rect")
       .classed("letter new", true)
     // MERGE SELECTION
     .merge(letters)
-      .style("height", data => `${data.count * 50}px`)
-      .text(data => data.character);
+      // set bar width and height
+      .style("width", barWidth)
+      // height is based on letter count
+      .style("height", data => `${data.count * 100}`)
+      // set starting y point (in order to keep white space from top)
+      .attr("y", data => height - data.count * 100)
+      // set starting x point in order to show bars one after another
+      .attr("x", (data, ind) => (barWidth + barPadding) * ind)
 
     // show text
     d3.select("#phrase")
