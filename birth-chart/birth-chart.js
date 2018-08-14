@@ -1,6 +1,6 @@
 // get the min and max year values
-let minYear = birthData[0].year;
-let maxYear = birthData[birthData.length-1].year;
+let minYear = d3.min(birthData, data => data.year);
+let maxYear = d3.max(birthData, data => data.year);
 
 // change input value and input range
 d3.select("input")
@@ -13,6 +13,11 @@ let width = 1000;
 let height = 700;
 let barNum = 12;
 let padding = 5;
+
+let maxBirths = d3.max(birthData, data => data.births);
+let yScale = d3.scaleLinear()
+  .domain([0, maxBirths])
+  .range([height, 0]);
 
 // calculate bar width
 let barWidth = width / barNum - padding;
@@ -33,9 +38,9 @@ d3.select("svg")
 .append("rect")
   .attr("width", barWidth)
   // set normalized height
-  .attr("height", data => data.births / 2.5e6 * height)
+  .attr("height", data => height - yScale(data.births))
   // set starting y point (in order to keep white space)
-  .attr("y", data => height - data.births / 2.5e6 * height)
+  .attr("y", data => yScale(data.births))
   // set starting x point in order to show bars one after another
   .attr("x", (data, ind) => (barWidth + padding) * ind)
   .attr("fill", "yellowgreen")
@@ -52,6 +57,6 @@ d3.select("input").on("input", () => {
   // for each rectangle set normalized height and y starting point
   d3.selectAll("rect")
     .data(birthData.filter(data => data.year == year))
-    .attr("height", data => data.births / 2.5e6 * height)
-    .attr("y", data => height - data.births / 2.5e6 * height);
+    .attr("height", data => height - yScale(data.births))
+    .attr("y", data => yScale(data.births));
 });
