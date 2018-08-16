@@ -57,6 +57,9 @@ d3.select("input").on("input", () => {
   // for each rectangle set normalized height and y starting point
   d3.selectAll("rect")
     .data(birthData.filter(data => data.year == year))
-    .attr("height", data => height - yScale(data.births))
-    .attr("y", data => yScale(data.births));
+    .transition()
+    .duration(200)
+    .ease(d3.easeLinear)
+      .attr("height", data => height - yScale(data.births))
+      .attr("y", data => yScale(data.births));
 });
