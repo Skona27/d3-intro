@@ -32,6 +32,22 @@ d3.select("svg")
     .attr("cy", data => yScale(data.lifeExpectancy))
     .attr("r", data => radiusScale(data.births))
     .attr("fill", data => colorScale(data.population / data.area))
+    .on("mousemove", (data) => {
+      tooltip
+        .style("opacity", 1)
+        .style("left", `${d3.event.x}px`)
+        .style("top", `${d3.event.y}px`)
+        .html(`
+          <p>Region: ${data.region}</p>
+          <p>Births: ${data.births}</p>
+          <p>Population: ${data.population}</p>
+          <p>Area: ${data.area}</p>
+          <p>Life Expectancy: ${data.lifeExpectancy}</p>
+        `)
+    }).on("mouseout", () => {
+      tooltip
+        .style("opacity", 0)
+    })
 
 // axis
 const xAxis = d3.axisBottom(xScale)
@@ -79,3 +95,8 @@ d3.select("svg")
     .attr("dy", "-1.3em")
     .style("text-anchor", "middle")
     .text("Life Expectancy");
+  
+// tooltip
+let tooltip = d3.select("body")
+  .append("div")
+    .classed("tooltip", true);
